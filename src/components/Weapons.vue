@@ -93,7 +93,7 @@
           <nav class="float-end">
             <ul class="pagination">
               <li v-if="!isFirstPage" class="page-item"><a class="page-link" href="#" v-on:click='previousPage'>Previous</a></li>
-              <li class="page-item" v-for="n in totalPages" :key="n">
+              <li :class="{ 'page-item active': currentPage == n, 'page-item': currentPage != n }" v-for="n in totalPages" :key="n">
                 <a class="page-link" v-on:click='updatePage($event, n)' href="#" >{{n}}</a>
               </li>
               <li v-if="!isLastPage" class="page-item"><a class="page-link" href="#" v-on:click='nextPage'>Next</a></li>
@@ -240,23 +240,11 @@
         // Set query parameters
         this.$router.replace({name: "weapons", query: { page: this.queryParams['page'], limit:  this.queryParams['limit'], search: this.queryParams['name'] }})
 
-        // isFirstPage 
-        if (this.queryParams['page'] == 1)
-        {
-          this.isFirstPage = true;
-        } 
-        else {
-          this.isFirstPage = false;
-        }
+        // isFirstPage
+        this.isFirstPage = (this.queryParams['page'] == 1);
 
         // isLastPage 
-        if (this.queryParams['page'] == this.totalPages)
-        {
-          this.isLastPage = true;
-        } 
-        else {
-          this.isLastPage = false;
-        }
+        this.isLastPage = (this.queryParams['page'] == this.totalPages);
         
         // Build query params string for API
         let queryString = "?page=" + this.queryParams['page'] + '&limit=' + this.queryParams['limit']
@@ -287,16 +275,15 @@
         })
         .then(response => {
             this.weaponsData = response.data;
+
             this.isLoadingWeapons = false;
+
             this.totalPages = response.totalPages
             this.totalElements = response.totalElements
 
-            if(this.totalElements == 0){
-              this.isDataEmpty = true;
-            } 
-            else {
-              this.isDataEmpty = false;
-            }
+            this.isDataEmpty = (this.totalElements == 0);
+      
+            this.isDataEmpty = false;
         })
         .catch(err => {
             this.isLoadingWeapons = false;

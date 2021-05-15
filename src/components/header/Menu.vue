@@ -4,9 +4,7 @@
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-bs-toggle="dropdown" aria-expanded="false">Weapon Builds</a>
       <ul class="dropdown-menu" aria-labelledby="dropdown03">
-        <li><router-link class="dropdown-item" to='/builds'>List</router-link></li>
-        <li><a class="dropdown-item" href="#">Another action</a></li>
-        <li><a class="dropdown-item" href="#">Something else here</a></li>
+        <li><router-link class="dropdown-item" to='/weaponbuilds'>List</router-link></li>
       </ul>
     </li>
     <li class="nav-item dropdown">

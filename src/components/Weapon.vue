@@ -173,9 +173,9 @@
             <div class="col-12">
               <h2 class="text-start">{{weapon.name}} blueprints</h2>
 
-              <h4 v-if="weapon.available_blueprints == 0">No blueprints found for this weapon!</h4>
+              <h4>No blueprints found for this weapon!</h4>
               
-              <table v-for="blueprint in weapon.available_blueprints" :key="blueprint._id" class="table">
+              <!-- <table v-for="blueprint in weapon.available_blueprints" :key="blueprint._id" class="table">
                 <thead>
                   <th class="text-start">{{blueprint.name}}</th>
                   <th>Level required</th>
@@ -186,7 +186,7 @@
                     <td v-if="attachment.type_id == attachmentType._id" style="width:30%;">{{attachment.lvl_requirement}}</td>
                   </tr>
                 </tbody>
-              </table>              
+              </table>               -->
             </div>
           </div>
 
@@ -215,8 +215,8 @@
         errorMessage: null,
         isDataEmpty: false,
         dataEmptyMessage: "",
-        apiWeapons: apiHelper.base + "/weapons",
-        apiWeaponAttachments: apiHelper.base + "/weaponAttachments"
+        apiWeapons: apiHelper.getEndpoint("weapons"),
+        apiWeaponAttachments: apiHelper.getEndpoint("weaponAttachments")
       }
     },
     created () {
@@ -275,7 +275,7 @@
         .then(response => { 
             if(response.ok){
                 return response.json()    
-            } else{
+            } else {
                 this.error = true;
                 this.errorMessage = response.message;
             }                

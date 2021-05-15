@@ -61,13 +61,6 @@
         </form>
       </div>
     </div>
-
-    <!-- Nightbot -->
-    <div class="row">
-      <div class="col-12">
-        <h2 class="text-start">Nightbot</h2>
-      </div>
-    </div>
   </div>  
 
 </template>

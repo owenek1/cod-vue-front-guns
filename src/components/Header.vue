@@ -15,11 +15,14 @@
             <img src="https://github.com/mdo.png" alt="mdo" width="42" height="42" class="rounded-circle">
           </a>
           <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1" style="">
-            <li><a class="dropdown-item" href="#">New weapon build...</a></li>
-            <li><a class="dropdown-item" href="#">My weapon builds...</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><router-link class="dropdown-item" to="/user/profile">Profile</router-link></li>
+            <li v-if="user.role != 'admin'"><router-link class="dropdown-item" to="/user/weaponbuilds/new">New weapon build...</router-link></li>
+            <li v-if="user.role != 'admin'"><router-link class="dropdown-item" to="/user/weaponbuilds">My weapon builds...</router-link></li>
+            <li v-if="user.role != 'admin'"><hr class="dropdown-divider"></li>
+            <li ><router-link class="dropdown-item" to="/user/profile">Profile</router-link></li>
+            <li v-if="user.role != 'admin'"><router-link class="dropdown-item" to="/user/nightbot">Nightbot</router-link></li>
+
             <li v-if="user.role == 'admin'"><router-link class="dropdown-item" to="/admin/dashboard">Dashboard</router-link></li>
+
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" v-on:click='logoutAction' href="#">Logout</a></li>
           </ul>
@@ -64,6 +67,7 @@
       logoutAction(e) {
         e.preventDefault();
         localStorage.removeItem("auth_data");
+        localStorage.removeItem("user");
         this.$store.commit('checkIsAuthenticated');
         this.$router.push("/login");
       }
