@@ -30,116 +30,115 @@
             <br />
 
             <!-- Table -->
-            <table class="table table-hover table-responsive">
-                <thead>
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Accuracy</th>
-                    <th scope="col">Control</th>
-                    <th scope="col">Damage</th>
-                    <th scope="col">Fire Rate</th>
-                    <th scope="col">Mobility</th>
-                    <th scope="col">Range</th>
-                    <th scope="col">Actions</th>
-                </tr>
-                </thead>
+            <div id="results-table" style="position: relative;">
+                <div v-if="isReloading" class="d-flex overlay justify-content-center">
+                    <div class="spinner-border" style="margin-top: 12rem; width: 5rem; height: 5rem;" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <table class="table table-hover table-responsive">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Accuracy</th>
+                            <th scope="col">Control</th>
+                            <th scope="col">Damage</th>
+                            <th scope="col">Fire Rate</th>
+                            <th scope="col">Mobility</th>
+                            <th scope="col">Range</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
 
-                <!-- Display results -->
-                <tbody v-if="!isDataEmpty && !isReloading">
-                <tr v-for="(weapon, index) in weapons" :key="weapon._id">
+                    <!-- Display results -->
+                    <tbody v-if="!isDataEmpty">
+                    <tr v-for="(weapon, index) in weapons" :key="weapon._id">
 
-                    <!-- Weapon name column -->
-                    <td v-if="elementToUpdate == null"><router-link :to="{ name: 'weapon', params: { name: weapon.name_lower }}">{{ weapon.name }}</router-link></td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
-                        <input type="text" class="form-control" v-model="elementToUpdate.name">
-                    </td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">
-                        <router-link :to="{ name: 'weapon', params: { name: weapon.name_lower }}">{{ weapon.name }}</router-link>
-                    </td>
+                        <!-- Weapon name column -->
+                        <td v-if="elementToUpdate == null"><router-link :to="{ name: 'weapon', params: { name: weapon.name_lower }}">{{ weapon.name }}</router-link></td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
+                            <input type="text" class="form-control" v-model="elementToUpdate.name">
+                        </td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">
+                            <router-link :to="{ name: 'weapon', params: { name: weapon.name_lower }}">{{ weapon.name }}</router-link>
+                        </td>
 
-                    <!-- Weapon type -->
-                    <td v-if="elementToUpdate == null">{{ weapon.type.name }}</td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
-                        <select class="form-select" v-model="elementToUpdate.type_id" >
-                            <option v-for="weaponType in weaponTypes" :key="weaponType._id" :selected="elementToUpdate.type_id == weaponType._id" :value="weaponType._id">{{ weaponType.name }}</option>
-                        </select>
-                    </td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">
-                        {{ weapon.type.name }}
-                    </td>
-                    
-                    <!-- Statistics accuracy -->
-                    <td v-if="elementToUpdate == null">{{ weapon.statistics.accuracy }}</td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">{{ weapon.statistics.accuracy }}</td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
-                        <input style="width: 80px;" type="number" class="form-control" v-model="elementToUpdate.statistics.accuracy">
-                    </td>
+                        <!-- Weapon type -->
+                        <td v-if="elementToUpdate == null">{{ weapon.type.name }}</td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
+                            <select class="form-select" v-model="elementToUpdate.type_id" >
+                                <option v-for="weaponType in weaponTypes" :key="weaponType._id" :selected="elementToUpdate.type_id == weaponType._id" :value="weaponType._id">{{ weaponType.name }}</option>
+                            </select>
+                        </td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">
+                            {{ weapon.type.name }}
+                        </td>
+                        
+                        <!-- Statistics accuracy -->
+                        <td v-if="elementToUpdate == null">{{ weapon.statistics.accuracy }}</td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">{{ weapon.statistics.accuracy }}</td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
+                            <input style="width: 80px;" type="number" class="form-control" v-model="elementToUpdate.statistics.accuracy">
+                        </td>
 
-                    <!-- Statistics control -->
-                    <td v-if="elementToUpdate == null">{{ weapon.statistics.control }}</td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">{{ weapon.statistics.control }}</td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
-                        <input style="width: 80px;" type="number" class="form-control" v-model="elementToUpdate.statistics.control">
-                    </td>
+                        <!-- Statistics control -->
+                        <td v-if="elementToUpdate == null">{{ weapon.statistics.control }}</td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">{{ weapon.statistics.control }}</td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
+                            <input style="width: 80px;" type="number" class="form-control" v-model="elementToUpdate.statistics.control">
+                        </td>
 
-                    <!-- Statistics damage -->
-                    <td v-if="elementToUpdate == null">{{ weapon.statistics.damage }}</td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">{{ weapon.statistics.damage }}</td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
-                        <input style="width: 80px;" type="number" class="form-control" v-model="elementToUpdate.statistics.damage">
-                    </td>
+                        <!-- Statistics damage -->
+                        <td v-if="elementToUpdate == null">{{ weapon.statistics.damage }}</td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">{{ weapon.statistics.damage }}</td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
+                            <input style="width: 80px;" type="number" class="form-control" v-model="elementToUpdate.statistics.damage">
+                        </td>
 
-                    <!-- Statistics fire rate -->
-                    <td v-if="elementToUpdate == null">{{ weapon.statistics.fireRate }}</td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">{{ weapon.statistics.fireRate }}</td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
-                        <input style="width: 80px;" type="number" class="form-control" v-model="elementToUpdate.statistics.fireRate">
-                    </td>
+                        <!-- Statistics fire rate -->
+                        <td v-if="elementToUpdate == null">{{ weapon.statistics.fireRate }}</td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">{{ weapon.statistics.fireRate }}</td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
+                            <input style="width: 80px;" type="number" class="form-control" v-model="elementToUpdate.statistics.fireRate">
+                        </td>
 
-                    <!-- Statistics mobility -->
-                    <td v-if="elementToUpdate == null">{{ weapon.statistics.mobility }}</td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">{{ weapon.statistics.mobility }}</td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
-                        <input style="width: 80px;" type="number" class="form-control" v-model="elementToUpdate.statistics.mobility">
-                    </td>
+                        <!-- Statistics mobility -->
+                        <td v-if="elementToUpdate == null">{{ weapon.statistics.mobility }}</td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">{{ weapon.statistics.mobility }}</td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
+                            <input style="width: 80px;" type="number" class="form-control" v-model="elementToUpdate.statistics.mobility">
+                        </td>
 
-                    <!-- Statistics range -->
-                    <td v-if="elementToUpdate == null">{{ weapon.statistics.range }}</td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">{{ weapon.statistics.range }}</td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
-                        <input style="width: 80px;" type="number" class="form-control" v-model="elementToUpdate.statistics.range">
-                    </td>
+                        <!-- Statistics range -->
+                        <td v-if="elementToUpdate == null">{{ weapon.statistics.range }}</td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id != weapon._id">{{ weapon.statistics.range }}</td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id == weapon._id">
+                            <input style="width: 80px;" type="number" class="form-control" v-model="elementToUpdate.statistics.range">
+                        </td>
 
-                    <td> 
-                        <button v-if="elementToUpdate == null" class="btn btn-primary btn-sm" v-on:click="prepareToUpdate(weapon)">Update</button>
-                        <button v-if="elementToUpdate != null && elementToUpdate._id == weapon._id" class="btn btn-success btn-sm me-1" v-on:click="updateAction(index)">Save</button>
-                        <button v-if="elementToUpdate != null && elementToUpdate._id == weapon._id" class="btn btn-danger btn-sm" v-on:click="cancelUpdate()">Cancel</button>
-                    </td>
-                </tr>
-                </tbody>
-
-                <tbody v-if="isDataEmpty && !isReloading">
-                <tr class="no-data">
-                    <td colspan="8">
-                    No data to display
-                    </td>
-                </tr>
-                </tbody>
-
-                <!-- Reloading results -->
-                <tbody v-if="isReloading">
-                    <tr class="no-data">
-                        <td colspan="8">
-                        <div class="d-flex justify-content-center">
-                            <div class="spinner-border" style="margin-top: 1rem; margin-bottom: 1rem; width: 5rem; height: 5rem;" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
+                        <!-- Actions -->
+                        <td> 
+                            <button v-if="elementToUpdate == null" class="btn btn-primary btn-sm me-1" v-on:click="prepareToUpdate(weapon)">Update</button>
+                            <button v-if="elementToUpdate == null" class="btn btn-danger btn-sm" v-on:click="deleteAction(weapon)">Delete</button>
+                            
+                            <button v-if="elementToUpdate != null && elementToUpdate._id == weapon._id" class="btn btn-success btn-sm me-1" v-on:click="updateAction(index)">Save</button>
+                            <button v-if="elementToUpdate != null && elementToUpdate._id == weapon._id" class="btn btn-danger btn-sm" v-on:click="cancelUpdate()">Cancel</button>
                         </td>
                     </tr>
-                </tbody>
-            </table>
+                    </tbody>
+
+                    <!-- Data empty body -->
+                    <tbody v-if="isDataEmpty">
+                        <tr class="no-data">
+                            <td colspan="8">
+                            No data to display
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
             <!-- Limint and Pagination -->
             <div v-if="!isLoading && !isDataEmpty" class="row">
                 <!-- <div class="col">
@@ -166,6 +165,20 @@
     </div>
 </template>
 
+<style scoped>
+    /* Add an overlay to the entire page blocking any further presses to buttons or other elements. */
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(126, 126, 126, 0.5);
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
+
 <script>
     import Loading from '../Loading.vue';
 
@@ -191,6 +204,7 @@
                 currentPage: 1,
                 currentLimit: 10,
                 isUpdating: false,
+                isDeleting: false,
                 elementToUpdate: null,
                 queryParams: { page: 1, limit: 10},
                 filterType: null,
@@ -262,6 +276,11 @@
 
                     console.log(err);
                 });
+            },
+            // Delete
+            deleteAction(weapon)
+            {
+                console.log(weapon._id);
             },
             // Filters 
             filterTypeChange (e) {

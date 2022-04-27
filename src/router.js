@@ -3,14 +3,22 @@ import VueRouter from 'vue-router'
 
 // Admin components 
 import Dashboard from './components/Dashboard.vue'
+
 import DashboardOverview from './components/dashboard/Overview.vue'
 import DashboardReports from './components/dashboard/Reports.vue'
 
 import DashboardNightbots from './components/dashboard/Nightbots.vue'
 import DashboardNightbotsList from './components/dashboard/NightbotsList.vue'
 
+import DashboardUsers from './components/dashboard/Users.vue'
+import DashboardUsersNew from './components/dashboard/UserNew.vue'
+import DashboardUsersList from './components/dashboard/UsersList.vue'
+
 import DashboardWeapons from './components/dashboard/Weapons.vue'
 import DashboardWeaponsList from './components/dashboard/WeaponsList.vue'
+
+import DashboardWeaponBuilds from './components/dashboard/WeaponBuilds.vue'
+import DashboardWeaponBuildsList from './components/dashboard/WeaponBuildsList.vue'
 
 // Base components
 import Home from './components/Home.vue'
@@ -131,6 +139,23 @@ const router = new VueRouter({
           ]
         },
         {
+          path: 'users',
+          component: DashboardUsers,
+          children: [
+            {
+              path: 'new',
+              name: 'usersnew',
+              component: DashboardUsersNew,
+            },
+            {
+              path: 'list',
+              name: 'userslist',
+              component: DashboardUsersList,
+              query: { page: 1, limit: 10, search: "", type: ""}
+            }
+          ]
+        },
+        {
           path: 'weapons',
           component: DashboardWeapons,
           children: [
@@ -138,7 +163,19 @@ const router = new VueRouter({
               path: 'list',
               name: 'weaponslist',
               component: DashboardWeaponsList,
-              uery: { page: 1, limit: 10, search: "", type: ""}
+              query: { page: 1, limit: 10, search: "", type: ""}
+            }
+          ]
+        },
+        {
+          path: 'weaponbuilds',
+          component: DashboardWeaponBuilds,
+          children: [
+            {
+              path: 'list',
+              name: 'weaponBuildsList',
+              component: DashboardWeaponBuildsList,
+              query: { page: 1, limit: 10, search: "", type: ""}
             }
           ]
         }

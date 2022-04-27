@@ -10,7 +10,9 @@
     </div>
 
     <!-- Display data -->
-    <div v-if="weaponsData">
+    <div v-if="!(isLoadingWeapons && isLoadingWeponTypes)">
+
+      <!-- Filters -->
       <div class="row">
         <div class="col">
           <select id="filter-type" v-on:change="filterTypeChange" class="form-select" aria-label="Default select example">
@@ -18,64 +20,64 @@
             <option v-for="type in weaponTypesData" v-bind:value="type.name_lower" :key="type._id">{{type.name}}</option>
           </select>
         </div>
+
         <div class="col">
+          <!-- empty -->
         </div>
+
         <div class="col">
           <div class="input-group mb-3">
             <input type="text" v-debounce:1s.lock="searchChange"  class="form-control" placeholder="Search weapon" aria-label="search" v-model="searchValue">
           </div>
         </div>
       </div>
+
       <br />
-      <table class="table table-hover table-responsive">
-        <thead>
-          <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Type</th>
-            <th scope="col">Accuracy</th>
-            <th scope="col">Control</th>
-            <th scope="col">Damage</th>
-            <th scope="col">Fire Rate</th>
-            <th scope="col">Mobility</th>
-            <th scope="col">Range</th>
-          </tr>
-        </thead>
 
-        <!-- Display results -->
-        <tbody v-if="!isLoadingWeapons && !isDataEmpty">
-          <tr v-for="weapon in weaponsData" :key="weapon._id">
-            <td><router-link :to="{ name: 'weapon', params: { name: weapon.name_lower }}">{{ weapon.name }}</router-link></td>
-            <td>{{ weapon.type.name }}</td>
-            <td>{{ weapon.statistics.accuracy }}</td>
-            <td>{{ weapon.statistics.control }}</td>
-            <td>{{ weapon.statistics.damage }}</td>
-            <td>{{ weapon.statistics.fireRate }}</td>
-            <td>{{ weapon.statistics.mobility }}</td>
-            <td>{{ weapon.statistics.range }}</td>
-          </tr>
-        </tbody>
+      <!-- Table -->
+      <div id="results-table" style="position: relative;">
+        <div v-if="isReloading || isLoadingWeapons" class="d-flex overlay justify-content-center">
+            <div class="spinner-border" style="margin-top: 12rem; width: 5rem; height: 5rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <table class="table table-hover table-responsive">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Type</th>
+              <th scope="col">Accuracy</th>
+              <th scope="col">Control</th>
+              <th scope="col">Damage</th>
+              <th scope="col">Fire Rate</th>
+              <th scope="col">Mobility</th>
+              <th scope="col">Range</th>
+            </tr>
+          </thead>
 
-        <tbody v-if="!isLoadingWeapons && isDataEmpty">
-          <tr class="no-data">
-            <td colspan="8">
-              No data to display
-            </td>
-          </tr>
-        </tbody>
+          <!-- Display results -->
+          <tbody v-if="!isLoadingWeapons && !isDataEmpty">
+            <tr v-for="weapon in weaponsData" :key="weapon._id">
+              <td><router-link :to="{ name: 'weapon', params: { name: weapon.name_lower }}">{{ weapon.name }}</router-link></td>
+              <td>{{ weapon.type.name }}</td>
+              <td>{{ weapon.statistics.accuracy }}</td>
+              <td>{{ weapon.statistics.control }}</td>
+              <td>{{ weapon.statistics.damage }}</td>
+              <td>{{ weapon.statistics.fireRate }}</td>
+              <td>{{ weapon.statistics.mobility }}</td>
+              <td>{{ weapon.statistics.range }}</td>
+            </tr>
+          </tbody>
 
-        <!-- Reloading weapon results -->
-        <tbody v-if="isLoadingWeapons">
-          <tr class="no-data">
-            <td colspan="8">
-              <div class="d-flex justify-content-center">
-                <div class="spinner-border" style="margin-top: 1rem; margin-bottom: 1rem; width: 5rem; height: 5rem;" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+          <tbody v-if="!isLoadingWeapons && isDataEmpty">
+            <tr class="no-data">
+              <td colspan="8">
+                No data to display
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <br />
 
@@ -106,6 +108,18 @@
 </template>
 
 <style scoped>
+  /* Add an overlay to the entire page blocking any further presses to buttons or other elements. */
+  .overlay 
+  {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(126, 126, 126, 0.5);
+      background-position: center;
+      background-repeat: no-repeat;
+  }
   .limit-elements 
   {
     width: 20%;
@@ -123,6 +137,7 @@
       return {
         isLoadingWeapons: false,
         isLoadingWeponTypes: false,
+        isReloading: false,
         weaponsData: null,
         weaponTypesData: null,
         error: false,
@@ -216,7 +231,8 @@
       },
       fetchWeaponsData (initial=false) {
         this.error = false;
-        this.isLoadingWeapons = true;
+        this.isLoadingWeapons = initial;
+        this.isReloading = !initial;
         
         let queryParamsRoute = this.$route.query;
         if(initial && typeof(queryParamsRoute) != 'undefined')
@@ -277,6 +293,7 @@
             this.weaponsData = response.data;
 
             this.isLoadingWeapons = false;
+            this.isReloading = false;
 
             this.totalPages = response.totalPages
             this.totalElements = response.totalElements
@@ -287,6 +304,7 @@
         })
         .catch(err => {
             this.isLoadingWeapons = false;
+            this.isReloading = false;
             this.error = true;
             this.errorMessage = "Failed to fetch data from API server!";
             console.log(err);

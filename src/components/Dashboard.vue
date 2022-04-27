@@ -16,21 +16,21 @@
           </li>
           <li class="border-top my-3"></li>
           <li class="mb-1">
-            <button class="btn btn-toggle align-items-center rounded" aria-expanded="true">
+            <router-link class="btn btn-toggle align-items-center rounded" to="/admin/dashboard/users/list" aria-expanded="true">
               Users
-            </button>
+            </router-link>
             <div class="collapse show">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">
-                <li><a href="#" class="link-dark rounded">New user</a></li>
-                <li><a href="#" class="link-dark rounded">List</a></li>
+                <li><router-link class="link-dark rounded" to="/admin/dashboard/users/new">New user</router-link></li>
+                <li><router-link class="link-dark rounded" to="/admin/dashboard/users/list">List</router-link></li>
               </ul>
             </div>
           </li>
           <li class="border-top my-3"></li>
            <li class="mb-1">
-            <button class="btn btn-toggle align-items-center rounded" aria-expanded="true">
+            <router-link class="btn btn-toggle align-items-center rounded" to="/admin/dashboard/nightbots/list" aria-expanded="true">
               Nightbots
-            </button>
+            </router-link>
             <div class="collapse show">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">
                 <li><router-link class="link-dark rounded" to="/admin/dashboard/nightbots/list">List</router-link></li>
@@ -39,9 +39,9 @@
           </li>
           <li class="border-top my-3"></li>
           <li class="mb-1">
-            <button class="btn btn-toggle align-items-center rounded" aria-expanded="false">
+            <router-link class="btn btn-toggle align-items-center rounded" to="/admin/dashboard/weapons/list" aria-expanded="false">
               Weapons
-            </button>
+            </router-link>
             <div class="collapse show">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">
                 <li><router-link class="link-dark rounded" to="/admin/dashboard/weapons/list">List</router-link></li>
@@ -50,12 +50,12 @@
           </li>
           <li class="border-top my-3"></li>
           <li class="mb-1">
-            <button class="btn btn-toggle align-items-center rounded" aria-expanded="false">
+            <router-link class="btn btn-toggle align-items-center rounded" to="/admin/dashboard/weaponbuilds/list" aria-expanded="false">
               Weapon Builds
-            </button>
+            </router-link>
             <div class="collapse show">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">
-                <li><a href="#" class="link-dark rounded">List</a></li>
+                <li><router-link class="link-dark rounded" to="/admin/dashboard/weaponbuilds/list">List</router-link></li>
               </ul>
             </div>
           </li>

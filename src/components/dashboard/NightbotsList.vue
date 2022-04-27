@@ -10,87 +10,95 @@
                     <h1 class="float-start">Nightbots list</h1>
                 </div>
             </div>
+
             <!-- Table -->
-            <table class="table table-hover table-responsive">
-                <thead>
-                <tr>
-                    <th scope="col">Provider</th>
-                    <th scope="col">Provider Id</th>
-                    <th scope="col">Registered on</th>
-                    <th scope="col">User</th>
-                    <th scope="col">Active</th>
-                    <th scope="col">Actions</th>
-                </tr>
-                </thead>
+            <div id="results-table" style="position: relative;">
+                <div v-if="isReloading" class="d-flex overlay justify-content-center">
+                    <div class="spinner-border" style="margin-top: 12rem; width: 5rem; height: 5rem;" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <table class="table table-hover table-responsive">
+                    <thead>
+                    <tr>
+                        <th scope="col">Provider</th>
+                        <th scope="col">Provider Id</th>
+                        <th scope="col">Registered on</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
 
+                    <!-- Display results -->
+                    <tbody v-if="!isDataEmpty">
+                    <tr v-for="(nightbot, index) in nightbots" :key="nightbot._id">
+                        <td> {{ nightbot.provider }} </td>
+                        <td> {{ nightbot.provider_id }} </td>
+                        <td> {{ nightbot.registered_on }} </td>
 
-                <!-- Display results -->
-                <tbody v-if="!isDataEmpty">
-                <tr v-for="(nightbot, index) in nightbots" :key="nightbot._id">
-                    <td> {{ nightbot.provider }} </td>
-                    <td> {{ nightbot.provider_id }} </td>
-                    <td> {{ nightbot.registered_on }} </td>
+                        <!-- User -->
+                        <td v-if="elementToUpdate == null"> {{ nightbot.user.email }} </td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id != nightbot._id"> 
+                            {{ nightbot.user.email }} 
+                        </td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id == nightbot._id"> 
+                            <select class="form-select" v-model="elementToUpdate.user_id" >
+                                <option v-for="user in users" :key="user._id" :selected="elementToUpdate.user_id == user._id" :value="user._id">{{user.email}}</option>
+                            </select>
+                        </td>
 
-                    <!-- User -->
-                    <td v-if="elementToUpdate == null"> {{ nightbot.user.email }} </td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id != nightbot._id"> 
-                        {{ nightbot.user.email }} 
-                    </td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id == nightbot._id"> 
-                        <select class="form-select" v-model="elementToUpdate.user_id" >
-                            <option v-for="user in users" :key="user._id" :selected="elementToUpdate.user_id == user._id" :value="user._id">{{user.email}}</option>
-                        </select>
-                    </td>
+                        <!-- Active -->
+                        <td v-if="elementToUpdate == null"> 
+                            <span v-if="nightbot.is_active" class="badge bg-success">Active</span>
+                            <span v-if="!nightbot.is_active" class="badge bg-danger">Not active</span>  
+                        </td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id != nightbot._id"> 
+                            <span v-if="nightbot.is_active" class="badge bg-success">Active</span>
+                            <span v-if="!nightbot.is_active" class="badge bg-danger">Not active</span>  
+                        </td>
+                        <td v-if="elementToUpdate != null && elementToUpdate._id == nightbot._id">
+                            <select class="form-select" v-model="elementToUpdate.is_active">
+                                <option :value="true" :selected="elementToUpdate.is_active">True</option>
+                                <option :value="false" :selected="!elementToUpdate.is_active">False</option>
+                            </select>
+                        </td>
 
-                    <!-- Active -->
-                    <td v-if="elementToUpdate == null"> 
-                        <span v-if="nightbot.is_active" class="badge bg-success">Active</span>
-                        <span v-if="!nightbot.is_active" class="badge bg-danger">Not active</span>  
-                    </td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id != nightbot._id"> 
-                        <span v-if="nightbot.is_active" class="badge bg-success">Active</span>
-                        <span v-if="!nightbot.is_active" class="badge bg-danger">Not active</span>  
-                    </td>
-                    <td v-if="elementToUpdate != null && elementToUpdate._id == nightbot._id">
-                        <select class="form-select" v-model="elementToUpdate.is_active">
-                            <option :value="true" :selected="elementToUpdate.is_active">True</option>
-                            <option :value="false" :selected="!elementToUpdate.is_active">False</option>
-                        </select>
-                    </td>
-
-                    <!-- Actions -->
-                    <td> 
-                        <button v-if="elementToUpdate == null" class="btn btn-primary btn-sm" v-on:click="prepareToUpdate(nightbot)">Update</button>
-                        <button v-if="elementToUpdate != null && elementToUpdate._id == nightbot._id" class="btn btn-success btn-sm me-1" v-on:click="updateAction(index)">Save</button>
-                        <button v-if="elementToUpdate != null && elementToUpdate._id == nightbot._id" class="btn btn-danger btn-sm" v-on:click="cancelUpdate()">Cancel</button>
-                    </td>
-                </tr>
-                </tbody>
-
-                <tbody v-if="isDataEmpty">
-                <tr class="no-data">
-                    <td colspan="8">
-                    No data to display
-                    </td>
-                </tr>
-                </tbody>
-
-                <!-- Reloading results -->
-                <tbody v-if="isReloading">
-                    <tr class="no-data">
-                        <td colspan="8">
-                        <div class="d-flex justify-content-center">
-                            <div class="spinner-border" style="margin-top: 1rem; margin-bottom: 1rem; width: 5rem; height: 5rem;" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
+                        <!-- Actions -->
+                        <td> 
+                            <button v-if="elementToUpdate == null" class="btn btn-primary btn-sm" v-on:click="prepareToUpdate(nightbot)">Update</button>
+                            <button v-if="elementToUpdate != null && elementToUpdate._id == nightbot._id" class="btn btn-success btn-sm me-1" v-on:click="updateAction(index)">Save</button>
+                            <button v-if="elementToUpdate != null && elementToUpdate._id == nightbot._id" class="btn btn-danger btn-sm" v-on:click="cancelUpdate()">Cancel</button>
                         </td>
                     </tr>
-                </tbody>
-            </table>
+                    </tbody>
+
+                    <tbody v-if="isDataEmpty">
+                    <tr class="no-data">
+                        <td colspan="8">
+                        No data to display
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>  
     </div>
 </template>
+
+<style scoped>
+    /* Add an overlay to the entire page blocking any further presses to buttons or other elements. */
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(126, 126, 126, 0.5);
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
 
 <script>
     import Loading from '../Loading.vue';

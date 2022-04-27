@@ -1,4 +1,4 @@
 <template>
-  <h1>This is reports</h1>
+  <h1>This are reports</h1>
 </template>
 
