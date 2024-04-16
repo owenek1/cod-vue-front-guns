@@ -21,7 +21,7 @@
             </router-link>
             <div class="collapse show">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">
-                <li><router-link class="link-dark rounded" to="/admin/dashboard/users/new">New user</router-link></li>
+                <li><router-link class="link-dark rounded" to="/admin/dashboard/users/new">New</router-link></li>
                 <li><router-link class="link-dark rounded" to="/admin/dashboard/users/list">List</router-link></li>
               </ul>
             </div>
@@ -44,6 +44,7 @@
             </router-link>
             <div class="collapse show">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">
+                <li><router-link class="link-dark rounded" to="/admin/dashboard/weapons/new">New</router-link></li>
                 <li><router-link class="link-dark rounded" to="/admin/dashboard/weapons/list">List</router-link></li>
               </ul>
             </div>

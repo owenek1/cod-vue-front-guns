@@ -15,6 +15,7 @@ import DashboardUsersNew from './components/dashboard/UserNew.vue'
 import DashboardUsersList from './components/dashboard/UsersList.vue'
 
 import DashboardWeapons from './components/dashboard/Weapons.vue'
+import DashboardWeaponsNew from './components/dashboard/WeaponsNew.vue'
 import DashboardWeaponsList from './components/dashboard/WeaponsList.vue'
 
 import DashboardWeaponBuilds from './components/dashboard/WeaponBuilds.vue'
@@ -159,6 +160,11 @@ const router = new VueRouter({
           path: 'weapons',
           component: DashboardWeapons,
           children: [
+            {
+              path: 'new',
+              name: 'weaponsnew',
+              component: DashboardWeaponsNew,
+            },
             {
               path: 'list',
               name: 'weaponslist',

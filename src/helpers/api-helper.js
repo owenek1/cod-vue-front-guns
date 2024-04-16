@@ -3,11 +3,13 @@ import router from './../router'
 
 const base = "https://cod-warzone-guns-api.pawedrabik.repl.co"
 
+const apiVersion = "v1.0"
+
 const refreshTokenEndpoint = "token/refresh"
 
 export default {
   getEndpoint(name){
-    return base + "/" + name;
+    return base + "/" + apiVersion + "/" + name;
   },
   jsonPayloadReplacer(key, value) {
     

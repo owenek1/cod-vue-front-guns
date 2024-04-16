@@ -119,11 +119,14 @@
 
                         <!-- Actions -->
                         <td> 
-                            <button v-if="elementToUpdate == null" class="btn btn-primary btn-sm me-1" v-on:click="prepareToUpdate(weapon)">Update</button>
-                            <button v-if="elementToUpdate == null" class="btn btn-danger btn-sm" v-on:click="deleteAction(weapon)">Delete</button>
+                            <button v-if="elementToUpdate == null && elementToDelete == null" class="btn btn-primary btn-sm me-1" v-on:click="prepareToUpdate(weapon)">Update</button>
+                            <button v-if="elementToDelete == null && elementToUpdate == null" class="btn btn-danger btn-sm" v-on:click="prepareToDelete(weapon)">Delete</button>
                             
                             <button v-if="elementToUpdate != null && elementToUpdate._id == weapon._id" class="btn btn-success btn-sm me-1" v-on:click="updateAction(index)">Save</button>
                             <button v-if="elementToUpdate != null && elementToUpdate._id == weapon._id" class="btn btn-danger btn-sm" v-on:click="cancelUpdate()">Cancel</button>
+
+                            <button v-if="elementToDelete != null && elementToDelete._id == weapon._id" class="btn btn-danger btn-sm me-1" v-on:click="deleteAction(index)">Delete</button>
+                            <button v-if="elementToDelete != null && elementToDelete._id == weapon._id" class="btn btn-success btn-sm" v-on:click="cancelDelete()">Cancel</button>
                         </td>
                     </tr>
                     </tbody>
@@ -141,7 +144,7 @@
 
             <!-- Limint and Pagination -->
             <div v-if="!isLoading && !isDataEmpty" class="row">
-                <!-- <div class="col">
+                <!-- <div class="col-2">
                     <select v-on:change="limitChange" class="form-select limit-elements" aria-label="Default select example">
                         <option value="10" :selected="currentLimit == 10">10</option>
                         <option value="20" :selected="currentLimit == 20">20</option>
@@ -149,7 +152,7 @@
                         <option value="100" :selected="currentLimit == 100">100</option>
                     </select>
                 </div> -->
-                <div class="col">
+                <div class="col-10">
                     <nav class="float-end">
                         <ul class="pagination">
                         <li v-if="!isFirstPage" class="page-item"><a class="page-link" href="#" v-on:click='previousPage'>Previous</a></li>
@@ -198,7 +201,7 @@
                 weaponTypes: null,
                 apiWeaponsList: apiHelper.getEndpoint("weapons"),
                 apiWeaponTypes: apiHelper.getEndpoint("weaponTypes"),
-                apiWeapon: apiHelper.getEndpoint("admin/weapon"),
+                apiAdminWeapons: apiHelper.getEndpoint("admin/weapons"),
                 totalPages: 0,
                 totalElements: 0,
                 currentPage: 1,
@@ -206,12 +209,15 @@
                 isUpdating: false,
                 isDeleting: false,
                 elementToUpdate: null,
+                elementToDelete: null,
                 queryParams: { page: 1, limit: 10},
                 filterType: null,
                 searchQuery: null,
                 searchValue: "",
                 isLastPage: false,
                 isFirstPage: false,
+                error: false,
+                errorMessage: null,
             }
         }, 
         created () {
@@ -231,6 +237,7 @@
             }
         },
         methods: {
+            // Update
             prepareToUpdate(weapon) {
                 this.elementToUpdate = weapon;
                 this.isUpdating = true;
@@ -245,22 +252,19 @@
                 let headers = authHeader.getAuthHeader();
                 headers['Content-type'] = "application/json";
 
-                console.log( JSON.stringify(this.elementToUpdate));
-
                 const requestOptions = {
                     method : "PUT",
                     headers : headers,
                     body: JSON.stringify(this.elementToUpdate, apiHelper.jsonPayloadReplacer)
                 };
 
-                fetch(this.apiWeapon + "/" + weaponId, requestOptions)
+                fetch(this.apiAdminWeapons + "/" + weaponId, requestOptions)
                 .then(response => { 
                     if (response.ok) return response.json();
                     else this.handleResponseError(response);
                 })
                 .then(response => {
                     // this.handleResponseSuccess(response);
-                    console.log(response.data);
                     let updated = response.data;
 
                     this.$set(this.weapons, index, updated);
@@ -278,9 +282,52 @@
                 });
             },
             // Delete
-            deleteAction(weapon)
+            prepareToDelete(weapon)
             {
-                console.log(weapon._id);
+                this.elementToDelete = weapon;
+                this.isDeleting = true;
+            },
+            cancelDelete()
+            {
+                this.elementToDelete = null;
+                this.isDeleting = false;
+            },
+            deleteAction(index)
+            {
+                const weaponId = this.elementToDelete._id; 
+
+                let headers = authHeader.getAuthHeader();
+                headers['Content-type'] = "application/json";
+
+                const requestOptions = {
+                    method : "DELETE",
+                    headers : headers,
+                    body: JSON.stringify(this.elementToDelete, apiHelper.jsonPayloadReplacer)
+                };
+
+                fetch(this.apiAdminWeapons + "/" + weaponId, requestOptions)
+                .then(response => { 
+                    if (response.ok) return response.json();
+                    else this.handleResponseError(response);
+                })
+                .then(response => {
+                    // this.handleResponseSuccess(response);
+
+                    console.log(response);
+
+                    this.weapons.splice(index, 1);
+                   
+                    this.isDeleting = false;
+                    this.elementToDelete = null;
+                })
+                .catch(err => {
+                    this.error = true;
+                    this.errorMessage = "Failed to fetch data from API server!";
+                    this.isDeleting = false;
+                    this.elementToDelete = null;
+
+                    console.log(err);
+                });
             },
             // Filters 
             filterTypeChange (e) {
@@ -422,7 +469,6 @@
             },
             nextPage (e) {
                 e.preventDefault();
-                console.log("next");
                 if (this.queryParams['page'] < this.totalPages)
                 {
                     this.queryParams['page']++;
